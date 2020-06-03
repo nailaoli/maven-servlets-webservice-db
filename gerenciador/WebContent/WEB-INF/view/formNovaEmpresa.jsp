@@ -10,11 +10,19 @@
 <body>
 	<c:import url="logout-parcial.jsp"/>
 	<form action="${linkEntrada}" method="post">
-		<label for = "nome">Nome:</label>
-		<input type="text" name="nome" /> <br/>
-		<label for = "data">Data:</label> 
-		<input type="text" name="data" /> <br/>
+		<label for = "nome">Nome:</label><br/>
+		<input type="text" name="nome" /><br/>
+		<label for = "data">Data:</label><br/>
+		<input type="text" name="data" /><br/>
 		<input type="hidden" name="acao" value="NovaEmpresa" />
+		<label for = "categoria">Categoria:</label><br/>
+		<select name="categoria">
+			<option selected disabled hidden=''> </option>
+			<c:forEach items="${categorias}" var="categoria">
+					<option value="${categoria.id}">${categoria.nome}</option>
+			</c:forEach>
+		</select>
+		<br/>
 		<br/>
 		<input type="submit" />
 	</form>

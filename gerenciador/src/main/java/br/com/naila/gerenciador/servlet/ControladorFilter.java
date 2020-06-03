@@ -1,6 +1,8 @@
 package br.com.naila.gerenciador.servlet;
 
+import java.beans.PropertyVetoException;
 import java.io.IOException;
+import java.sql.SQLException;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -20,7 +22,7 @@ public class ControladorFilter implements Filter {
 	    throws IOException, ServletException {
 
 	System.out.println("Executando > ControladorFilter");
-	
+
 //	Fiz o cast para o elemento mais específico, pois possui mais métodos
 	HttpServletRequest request = (HttpServletRequest) servletRequest;
 	HttpServletResponse response = (HttpServletResponse) servletResponse;
@@ -29,7 +31,7 @@ public class ControladorFilter implements Filter {
 
 	String nomeDaClasse = "br.com.naila.gerenciador.acao." + paramAcao;
 
-	String retornoDoExecuta;
+	String retornoDoExecuta = null;
 
 	try {
 	    @SuppressWarnings("rawtypes")
@@ -37,8 +39,23 @@ public class ControladorFilter implements Filter {
 	    @SuppressWarnings("deprecation")
 	    Acao acao = (Acao) classe.newInstance();
 	    retornoDoExecuta = acao.executa(request, response);
-	} catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
+	} catch (ClassNotFoundException | InstantiationException | IllegalAccessException | PropertyVetoException e) {
 	    throw new ServletException(e);
+//	https://www.javaguides.net/2019/03/login-form-using-jsp-servlet-jdbc-mysql-example.html    
+	} catch (SQLException e) {
+	    for (Throwable ex : e) {
+		if (e instanceof SQLException) {
+		    e.printStackTrace(System.err);
+		    System.err.println("SQLState: " + ((SQLException) e).getSQLState());
+		    System.err.println("Error Code: " + ((SQLException) e).getErrorCode());
+		    System.err.println("Message: " + e.getMessage());
+		    Throwable t = ex.getCause();
+		    while (t != null) {
+			System.out.println("Cause: " + t);
+			t = t.getCause();
+		    }
+		}
+	    }
 	}
 
 	String[] separa = retornoDoExecuta.split(":");
